@@ -29,10 +29,6 @@
             transition: background-color 0.3s ease;
         }
 
-        .button.effect {
-            color: white;
-        }
-
         .button.effect-1 {
             background-color: #007bff;
         }
@@ -58,26 +54,56 @@
             100% { transform: translate(0); }
         }
 
-        /* 스파크 효과 */
-        .spark {
+        /* 물결 효과 */
+        .wave {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(0, 123, 255, 0.5);
+            animation: wave 0.6s forwards;
+        }
+
+        @keyframes wave {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* 폭발 효과 */
+        .explosion {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: orange;
+            animation: explosion 0.5s forwards;
+        }
+
+        @keyframes explosion {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(5); opacity: 0; }
+        }
+
+        /* 입자 효과 */
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
             background-color: yellow;
             border-radius: 50%;
             pointer-events: none;
-            animation: spark 0.5s forwards;
+            animation: particle 0.5s forwards;
         }
 
-        @keyframes spark {
+        @keyframes particle {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
+            100% { transform: scale(2); opacity: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button id="clickButton" class="button">클릭하세요!</button>
+        <button id="clickButton" class="button effect-1">클릭하세요!</button>
         <p id="clickCount">클릭 수: 0</p>
     </div>
     <audio id="clickSound" src="click-sound.mp3" preload="auto"></audio>
@@ -92,19 +118,23 @@
             clickCountDisplay.textContent = `클릭 수: ${count}`;
             
             // 효과음 재생
-            clickSound.currentTime = 0; // 소리 반복을 위해 시간 초기화
+            clickSound.currentTime = 0;
             clickSound.play();
 
             // 버튼 흔들기
             button.classList.add('shake');
 
-            // 스파크 생성
-            createSpark(e.clientX, e.clientY);
+            // 효과 적용
+            if (count < 10) {
+                createWave(e.clientX, e.clientY);
+            } else if (count < 100) {
+                createExplosion(e.clientX, e.clientY);
+            } else {
+                createParticles(e.clientX, e.clientY);
+            }
 
             // 버튼 스타일 변경
             button.classList.remove('effect-1', 'effect-10', 'effect-100');
-            button.classList.add('effect');
-
             if (count >= 100) {
                 button.classList.add('effect-100');
             } else if (count >= 10) {
@@ -117,22 +147,40 @@
             setTimeout(() => {
                 button.classList.remove('shake');
             }, 500);
-            
-            // 화면 흔들기
-            document.body.classList.add('shake');
-            setTimeout(() => {
-                document.body.classList.remove('shake');
-            }, 500);
         });
 
-        function createSpark(x, y) {
-            const spark = document.createElement('div');
-            spark.className = 'spark';
-            spark.style.left = `${x}px`;
-            spark.style.top = `${y}px`;
-            document.body.appendChild(spark);
-            // 스파크 애니메이션 후 제거
-            setTimeout(() => spark.remove(), 500);
+        function createWave(x, y) {
+            const wave = document.createElement('div');
+            wave.className = 'wave';
+            wave.style.left = `${x - 50}px`;
+            wave.style.top = `${y - 50}px`;
+            document.body.appendChild(wave);
+            setTimeout(() => wave.remove(), 600);
+        }
+
+        function createExplosion(x, y) {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = `${x - 15}px`;
+            explosion.style.top = `${y - 15}px`;
+            document.body.appendChild(explosion);
+            setTimeout(() => explosion.remove(), 500);
+        }
+
+        function createParticles(x, y) {
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                document.body.appendChild(particle);
+
+                // 입자가 랜덤한 방향으로 퍼지게 하기
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 50;
+                particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                setTimeout(() => particle.remove(), 500);
+            }
         }
     </script>
 </body>
