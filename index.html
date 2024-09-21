@@ -1,11 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
-<head> 
-    <title>나의 첫 게임</title>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클릭 이펙트</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button.effect {
+            color: white;
+        }
+
+        .button.effect-1 {
+            background-color: #007bff;
+        }
+
+        .button.effect-10 {
+            background-color: #28a745;
+            transform: scale(1.1);
+        }
+
+        .button.effect-100 {
+            background-color: #dc3545;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
 </head>
-    <body>
-        <h1>누군가는 알아주길</h1>
-        <P>저는 현재 2024/09/21 기준으로 6학년 즉 12살 입니다.</P>
-        <button>안녕</button>
-    </body>
+<body>
+    <div class="container">
+        <button id="clickButton" class="button">클릭하세요!</button>
+        <p id="clickCount">클릭 수: 0</p>
+    </div>
+    <script>
+        let count = 0;
+        const button = document.getElementById('clickButton');
+        const clickCountDisplay = document.getElementById('clickCount');
+
+        button.addEventListener('click', () => {
+            count++;
+            clickCountDisplay.textContent = `클릭 수: ${count}`;
+            
+            button.classList.remove('effect-1', 'effect-10', 'effect-100');
+            button.classList.add('effect');
+
+            if (count >= 100) {
+                button.classList.add('effect-100');
+            } else if (count >= 10) {
+                button.classList.add('effect-10');
+            } else {
+                button.classList.add('effect-1');
+            }
+        });
+    </script>
+</body>
 </html>
