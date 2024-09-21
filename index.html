@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클릭 이펙트(1~10,10~99,100)</title>
+    <title>클릭 이펙트</title>
     <style>
         body {
             display: flex;
@@ -18,6 +18,7 @@
 
         .container {
             text-align: center;
+            position: relative; /* 자식 요소의 절대 위치 설정 */
         }
 
         .button {
@@ -27,6 +28,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            position: relative; /* 이펙트 요소의 기준 */
         }
 
         .button.effect-1 {
@@ -54,50 +56,42 @@
             100% { transform: translate(0); }
         }
 
-        /* 물결 효과 */
-        .wave {
+        /* 스파크 효과 */
+        .spark {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: yellow;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: spark 0.5s forwards;
+        }
+
+        @keyframes spark {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* 화려한 이펙트 */
+        .effect {
             position: absolute;
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: rgba(0, 123, 255, 0.5);
-            animation: wave 0.6s forwards;
+            background: rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 1);
+            animation: burst 0.5s forwards;
         }
 
-        @keyframes wave {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        /* 폭발 효과 */
-        .explosion {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: orange;
-            animation: explosion 0.5s forwards;
-        }
-
-        @keyframes explosion {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(5); opacity: 0; }
-        }
-
-        /* 입자 효과 */
-        .particle {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background-color: yellow;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: particle 0.5s forwards;
-        }
-
-        @keyframes particle {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
+        @keyframes burst {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -124,14 +118,11 @@
             // 버튼 흔들기
             button.classList.add('shake');
 
-            // 효과 적용
-            if (count < 10) {
-                createWave(e.clientX, e.clientY);
-            } else if (count < 100) {
-                createExplosion(e.clientX, e.clientY);
-            } else {
-                createParticles(e.clientX, e.clientY);
-            }
+            // 화려한 이펙트 생성
+            createBurst(e.clientX, e.clientY);
+
+            // 스파크 생성
+            createSpark(e.clientX, e.clientY);
 
             // 버튼 스타일 변경
             button.classList.remove('effect-1', 'effect-10', 'effect-100');
@@ -149,40 +140,25 @@
             }, 500);
         });
 
-        function createWave(x, y) {
-            const wave = document.createElement('div');
-            wave.className = 'wave';
-            wave.style.left = `${x - 50}px`;
-            wave.style.top = `${y - 50}px`;
-            document.body.appendChild(wave);
-            setTimeout(() => wave.remove(), 600);
+        function createSpark(x, y) {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.left = `${x}px`;
+            spark.style.top = `${y}px`;
+            document.body.appendChild(spark);
+            setTimeout(() => spark.remove(), 500);
         }
 
-        function createExplosion(x, y) {
-            const explosion = document.createElement('div');
-            explosion.className = 'explosion';
-            explosion.style.left = `${x - 15}px`;
-            explosion.style.top = `${y - 15}px`;
-            document.body.appendChild(explosion);
-            setTimeout(() => explosion.remove(), 500);
-        }
-
-        function createParticles(x, y) {
-            for (let i = 0; i < 10; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = `${x}px`;
-                particle.style.top = `${y}px`;
-                document.body.appendChild(particle);
-
-                // 입자가 랜덤한 방향으로 퍼지게 하기
-                const angle = Math.random() * 2 * Math.PI;
-                const distance = Math.random() * 50;
-                particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
-                setTimeout(() => particle.remove(), 500);
-            }
+        function createBurst(x, y) {
+            const burst = document.createElement('div');
+            burst.className = 'effect';
+            burst.style.left = `${x - 50}px`; // 중앙 정렬
+            burst.style.top = `${y - 50}px`; // 중앙 정렬
+            document.body.appendChild(burst);
+            setTimeout(() => burst.remove(), 500);
         }
     </script>
 </body>
 </html>
+
 
