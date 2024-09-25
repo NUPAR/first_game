@@ -13,6 +13,7 @@
       height: 100vh; /* 뷰포트 전체 높이 */
       margin: 0; /* 기본 여백 제거 */
       background-color: #f0f0f0; /* 배경색 */
+      position: relative; /* 자식 요소의 절대 위치를 위해 설정 */
     }
 
     /* 천 질감 버튼 스타일 */
@@ -35,7 +36,7 @@
     }
 
     /* 팝콘 텍스트 스타일 */
-    #textPop {
+    .textPop {
       font-size: 18px;
       font-weight: bold;
       color: #d2691e; /* 팝콘 색상 */
@@ -62,20 +63,24 @@
 <body>
 
   <button id="fabricButton">Click Me!</button>
-  <span id="textPop">Popcorn!</span>
 
   <script>
     // 버튼 클릭 시 텍스트가 팝콘처럼 튀어오르는 애니메이션 효과
     const button = document.getElementById('fabricButton');
-    const textPop = document.getElementById('textPop');
 
     button.addEventListener('click', () => {
+      // 새로운 텍스트 생성
+      const textPop = document.createElement('span');
+      textPop.classList.add('textPop');
+      textPop.textContent = 'Popcorn!';
+
       // 텍스트 위치를 버튼의 중앙으로 이동
       const buttonRect = button.getBoundingClientRect();
-      textPop.style.left = `${buttonRect.left + buttonRect.width / 2 - textPop.offsetWidth / 2}px`;
+      textPop.style.left = `${buttonRect.left + buttonRect.width / 2 - 30}px`; // 텍스트의 가로 크기를 고려하여 조정
       textPop.style.top = `${buttonRect.top - textPop.offsetHeight}px`;
 
       // 텍스트가 보이도록 설정하고 애니메이션 시작
+      document.body.appendChild(textPop); // 페이지에 텍스트 추가
       textPop.style.opacity = '1';
       textPop.style.animation = 'popEffect 1.5s forwards';
 
@@ -83,11 +88,15 @@
       setTimeout(() => {
         textPop.style.opacity = '0';
       }, 1500);
+
+      // 텍스트 요소를 DOM에서 제거
+      setTimeout(() => {
+        textPop.remove();
+      }, 2000);
     });
   </script>
   
 </body>
 </html>
-
 
 
