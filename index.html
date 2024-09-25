@@ -1,163 +1,81 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클릭 이펙트</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-            transition: transform 0.5s;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fabric Button with Popcorn Effect</title>
+  <style>
+    /* 천 질감 버튼 스타일 */
+    button {
+      background: linear-gradient(135deg, #d2b48c, #a0522d); /* 천 느낌의 그라데이션 */
+      font-family: 'Arial', sans-serif;
+      color: white;
+      font-size: 16px;
+      padding: 10px 20px;
+      border: 2px solid #8b4513; /* 천과 어울리는 테두리 색 */
+      border-radius: 8px;
+      box-shadow: 0 4px #6b4226;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-        .container {
-            text-align: center;
-            position: relative; /* 자식 요소의 절대 위치 설정 */
-        }
+    button:active {
+      box-shadow: 0 2px #6b4226;
+      transform: translateY(2px); /* 버튼 클릭 시 살짝 눌리는 느낌 */
+    }
 
-        .button {
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            position: relative; /* 이펙트 요소의 기준 */
-        }
+    /* 팝콘 텍스트 스타일 */
+    #textPop {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d2691e; /* 팝콘 색상 */
+      position: absolute;
+      opacity: 0; /* 기본적으로 보이지 않음 */
+      transition: all 0.5s ease-out;
+    }
 
-        .button.effect-1 {
-            background-color: #007bff;
-        }
-
-        .button.effect-10 {
-            background-color: #28a745;
-        }
-
-        .button.effect-100 {
-            background-color: #dc3545;
-        }
-
-        /* 흔들림 애니메이션 */
-        .shake {
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0% { transform: translate(0); }
-            25% { transform: translate(-5px); }
-            50% { transform: translate(5px); }
-            75% { transform: translate(-5px); }
-            100% { transform: translate(0); }
-        }
-
-        /* 스파크 효과 */
-        .spark {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: yellow;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: spark 0.5s forwards;
-        }
-
-        @keyframes spark {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        /* 화려한 이펙트 */
-        .effect {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: rgba(255, 215, 0, 0.8);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 1);
-            animation: burst 0.5s forwards;
-        }
-
-        @keyframes burst {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-    </style>
+    @keyframes popEffect {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-100px);
+      }
+      100% {
+        transform: translateY(200px);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <button id="clickButton" class="button effect-1">클릭하세요!</button>
-        <p id="clickCount">클릭 수: 0</p>
-    </div>
-    <audio id="clickSound" src="click-sound.mp3" preload="auto"></audio>
-    <script>
-        let count = 0;
-        const button = document.getElementById('clickButton');
-        const clickCountDisplay = document.getElementById('clickCount');
-        const clickSound = document.getElementById('clickSound');
 
-        button.addEventListener('click', (e) => {
-            count++;
-            clickCountDisplay.textContent = `클릭 수: ${count}`;
-            
-            // 효과음 재생
-            clickSound.currentTime = 0;
-            clickSound.play();
+  <button id="fabricButton">Click Me!</button>
+  <span id="textPop">Popcorn!</span>
 
-            // 버튼 흔들기
-            button.classList.add('shake');
+  <script>
+    // 버튼 클릭 시 텍스트가 팝콘처럼 튀어오르는 애니메이션 효과
+    const button = document.getElementById('fabricButton');
+    const textPop = document.getElementById('textPop');
 
-            // 화려한 이펙트 생성
-            createBurst(e.clientX, e.clientY);
+    button.addEventListener('click', () => {
+      // 텍스트 위치를 버튼의 중앙으로 이동
+      const buttonRect = button.getBoundingClientRect();
+      textPop.style.left = `${buttonRect.left + buttonRect.width / 2 - textPop.offsetWidth / 2}px`;
+      textPop.style.top = `${buttonRect.top - textPop.offsetHeight}px`;
 
-            // 스파크 생성
-            createSpark(e.clientX, e.clientY);
+      // 텍스트가 보이도록 설정하고 애니메이션 시작
+      textPop.style.opacity = '1';
+      textPop.style.animation = 'popEffect 1.5s forwards';
 
-            // 버튼 스타일 변경
-            button.classList.remove('effect-1', 'effect-10', 'effect-100');
-            if (count >= 100) {
-                button.classList.add('effect-100');
-            } else if (count >= 10) {
-                button.classList.add('effect-10');
-            } else {
-                button.classList.add('effect-1');
-            }
-
-            // 흔들림 효과 제거
-            setTimeout(() => {
-                button.classList.remove('shake');
-            }, 500);
-        });
-
-        function createSpark(x, y) {
-            const spark = document.createElement('div');
-            spark.className = 'spark';
-            spark.style.left = `${x}px`;
-            spark.style.top = `${y}px`;
-            document.body.appendChild(spark);
-            setTimeout(() => spark.remove(), 500);
-        }
-
-        function createBurst(x, y) {
-            const burst = document.createElement('div');
-            burst.className = 'effect';
-            burst.style.left = `${x - 50}px`; // 중앙 정렬
-            burst.style.top = `${y - 50}px`; // 중앙 정렬
-            document.body.appendChild(burst);
-            setTimeout(() => burst.remove(), 500);
-        }
-    </script>
+      // 애니메이션 종료 후 텍스트 숨김 처리
+      setTimeout(() => {
+        textPop.style.opacity = '0';
+      }, 1500);
+    });
+  </script>
+  
 </body>
 </html>
 
